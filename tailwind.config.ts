@@ -22,6 +22,9 @@ export default {
         foreground: 'var(--foreground)',
       },
     },
+    screens: {
+      sm: { max: '991px' },
+    },
   },
   plugins: [],
 } satisfies Config;
