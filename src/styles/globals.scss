@@ -1,7 +1,7 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/utilities';
-@import 'tailwindcss/components';
-@import './variables.scss';
+@use 'tailwindcss/base';
+@use 'tailwindcss/utilities';
+@use 'tailwindcss/components';
+@use './variables.scss';
 
 * {
   margin: 0;

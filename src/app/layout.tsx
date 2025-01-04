@@ -31,7 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta name='theme-color' content='#f9f9f9' />
       </head>
 
-      <body className={`h-screen bg-[var(--background)] text-sm text-[var(--foreground)]`}>{children}</body>
+      <body className={`h-screen bg-[var(--background)] text-sm text-[var(--primary)]`}>{children}</body>
     </html>
   );
 }
