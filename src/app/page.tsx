@@ -1,10 +1,11 @@
 import Image from 'next/image';
 import PasswordWizardForm from '@components/PasswordWizardForm';
+import { PasswordWizardContextProvider } from '@/context/PasswordWizardContextProvider';
 
 export default async function PasswordMetricApp() {
   return (
-    <div className='min-h-[600px] mx-auto flex h-full w-[520px] flex-col items-center justify-center gap-16 p-8 sm:w-full'>
-      <div className='flex flex-col items-center gap-6'>
+    <div className='mx-auto flex h-full w-[520px] flex-col gap-16 p-8 sm:w-full'>
+      <div className='mt-28 flex flex-col items-center gap-6'>
         <Image src='/images/logo.png' alt='Password Metric' width={80} height={80} className='rounded-full' />
 
         <div className='text-2xl'>
@@ -18,7 +19,9 @@ export default async function PasswordMetricApp() {
         </div>
       </div>
 
-      <PasswordWizardForm />
+      <PasswordWizardContextProvider>
+        <PasswordWizardForm />
+      </PasswordWizardContextProvider>
     </div>
   );
 }

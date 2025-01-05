@@ -1,4 +1,4 @@
-export {};
+import { Options } from 'check-password-strength';
 
 declare global {
   type TPasswordForm = {
@@ -7,12 +7,27 @@ declare global {
     password3: string;
   };
 
+  type TPasswordStrength = {
+    password: string;
+    options?: Options<string>;
+    allowedSymbols?: string;
+  };
+
+  type TUserStats = {
+    times: [number, number, number];
+    attempts: [number, number, number];
+  };
+
+  type TStats = {
+    time: number;
+    attempt: number;
+  };
+
   type TStage = {
     id: number;
     password: string;
-    time: Date;
-    user_attempts: number;
-    strength: 0 | 1 | 2;
+    value: string;
+    strength: number;
     length: number;
     hasLowerCase: boolean;
     hasUpperCase: boolean;

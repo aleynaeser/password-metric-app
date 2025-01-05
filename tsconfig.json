@@ -19,6 +19,8 @@
       }
     ],
     "paths": {
+      "@hooks/*": ["./src/hooks/*"],
+      "@types/*": ["./src/types/*"],
       "@schemas/*": ["./src/schemas/*"],
       "@constants/*": ["./src/constants/*"],
       "@components/*": ["./src/components/*"],

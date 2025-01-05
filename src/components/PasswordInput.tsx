@@ -1,68 +1,64 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ErrorMessage, Field, useFormikContext } from 'formik';
-import Image from 'next/image';
-import classNames from 'classnames';
+import { useMemo, useState } from 'react';
+import { requirementLabels } from '@constants/password-requirements';
+import { ErrorMessage, Field, getIn, useFormikContext } from 'formik';
+import { DiversityType, passwordStrength } from 'check-password-strength';
+import { usePasswordWizard } from '@/context/PasswordWizardContextProvider';
+import PasswordStrengthBar from 'react-password-strength-bar';
 
-interface IPasswordInput {
-  activeStage: number;
-}
+export default function PasswordInput() {
+  const { activeStage, userStats, metrics, updateStats, setMetrics } = usePasswordWizard();
+  const { values, setFieldValue, setFieldTouched } = useFormikContext<TPasswordForm>();
 
-export default function PasswordInput({ activeStage }: IPasswordInput) {
-  const { setFieldValue } = useFormikContext<TPasswordForm>();
-
-  let strength = 0;
-  const [showPassword, setShowPassword] = useState(true);
-  const [requirements, setRequirements] = useState({
-    minLength: false,
-    lowercase: false,
-    uppercase: false,
-    number: false,
-    special: false,
-  });
-
-  const requirementLabels = {
-    minLength: 'En az 8 karakter',
-    lowercase: 'En az bir küçük harf',
-    uppercase: 'En az bir büyük harf',
-    number: 'En az bir rakam',
-    special: 'En az bir özel karakter',
-  };
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [startTime, setStartTime] = useState<number>(0);
 
   const passwordName = `password${activeStage}`;
+  const currentPassword = useMemo(() => getIn(values, passwordName), [passwordName, values]);
+
   const placeholder = ['Parola oluştur', 'Parola gereksinimlerine göre oluştur', 'Parola güçlendir'];
+
+  const handleBlur = () => {
+    if (timer) {
+      clearInterval(timer);
+      setTimer(null);
+    }
+
+    setFieldTouched(passwordName, true);
+  };
+
+  const handleFocus = () => {
+    setStartTime(Date.now());
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      updateStats({ time: userStats.times[activeStage - 1] + elapsed, attempt: userStats.attempts[activeStage - 1] });
+    }, 1000);
+    setTimer(interval);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    setFieldValue(passwordName, value);
+    setMetrics(passwordStrength(value));
+
+    if (value === '')
+      updateStats({ time: userStats.times[activeStage - 1], attempt: userStats.attempts[activeStage - 1] + 1 });
+  };
 
   return (
     <div className='flex w-[350px] flex-col sm:w-[calc(100%-40px)]'>
-      <div className='relative flex flex-col gap-2'>
-        <Field
-          name={passwordName}
-          type={showPassword ? 'text' : 'password'}
-          placeholder={placeholder[activeStage - 1]}
-          validate={(value: string) => !value && 'Parola alanı zorunludur.'}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const value = e.target.value;
-            const minLength = value.length >= 8;
-            const lowercase = /[a-z]/.test(value);
-            const uppercase = /[A-Z]/.test(value);
-            const number = /[0-9]/.test(value);
-            const special = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value);
-
-            setFieldValue(passwordName, value);
-            setRequirements({ minLength, lowercase, uppercase, number, special });
-          }}
-          className='ease h-10 rounded-3xl border border-[var(--accent)] p-3 text-xs outline-none transition delay-150 focus:border-[var(--secondary)]'
-        />
-
-        <Image
-          alt='eye'
-          width={16}
-          height={16}
-          className='absolute right-4 top-3 cursor-pointer'
-          src={`/images/${showPassword ? 'eye' : 'eye-off'}.png`}
-          onClick={() => setShowPassword(!showPassword)}
-        />
-      </div>
+      <Field
+        type='text'
+        name={passwordName}
+        value={currentPassword ?? ''}
+        placeholder={placeholder[activeStage - 1]}
+        validate={(value: string) => !value && 'Parola alanı zorunludur.'}
+        onFocus={handleFocus}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        className='ease h-10 rounded-3xl border border-[var(--accent)] p-3 text-xs outline-none transition delay-150 focus:border-[var(--secondary)]'
+      />
 
       <motion.div className='pl-3 pt-3 text-center text-xs text-[var(--error)]'>
         <ErrorMessage name={passwordName} />
@@ -74,23 +70,12 @@ export default function PasswordInput({ activeStage }: IPasswordInput) {
             Güçlü bir parola oluşturmak için şu gereksinimleri karşılayın:
           </div>
 
-          {activeStage === 4 && (
-            <div className='relative h-4 w-full rounded bg-gray-200'>
-              <div
-                className={classNames('h-4 rounded', {
-                  'bg-[var(--error)]': strength === 0,
-                  'bg-[var(--warning)]': strength === 1,
-                  'bg-[var(--success)]': strength === 2,
-                })}
-                style={{ width: `${(strength + 1) * 33.33}%` }}
-              />
-            </div>
-          )}
+          {activeStage === 4 && <PasswordStrengthBar password={currentPassword} />}
 
           <ul className='mt-4 space-y-2 text-xs'>
             {Object.keys(requirementLabels).map((key) => {
-              const requirementKey = key as keyof typeof requirements;
-              const isValid = requirements[requirementKey];
+              const requirementKey = key as DiversityType;
+              const isValid = metrics?.contains.includes(requirementKey);
 
               return (
                 <li

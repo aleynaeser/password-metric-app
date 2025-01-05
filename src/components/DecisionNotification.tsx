@@ -1,9 +1,8 @@
-interface IDecisionNotification {
-  setActiveStage: (value: number) => void;
-  setAcceptedPassword: (value: boolean) => void;
-}
+import { usePasswordWizard } from '@/context/PasswordWizardContextProvider';
 
-export default function DecisionNotification({ setActiveStage, setAcceptedPassword }: IDecisionNotification) {
+export default function DecisionNotification() {
+  const { setActiveStage, setPasswordAccepted } = usePasswordWizard();
+
   return (
     <div>
       <div className='text-center text-sm'>
@@ -16,7 +15,7 @@ export default function DecisionNotification({ setActiveStage, setAcceptedPasswo
           className='text-[var(--secondary)]'
           onClick={() => {
             setActiveStage(3);
-            setAcceptedPassword(true);
+            setPasswordAccepted(true);
           }}
         >
           Hayır

@@ -1,21 +1,37 @@
 'use client';
 
+import { Fragment } from 'react';
 import { Form, Formik } from 'formik';
-import { Fragment, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { usePasswordMetric } from '@hooks/usePasswordMetric';
+import { usePasswordWizard } from '@/context/PasswordWizardContextProvider';
 import Image from 'next/image';
 import PasswordInput from './PasswordInput';
-import FeedbackAnalysis from './FeedbackAnalysis';
+import PasswordAnalysis from './PasswordAnalysis';
 import DecisionNotification from './DecisionNotification';
 
 export default function PasswordWizardForm() {
-  const [activeStage, setActiveStage] = useState(1);
-  const [stages, setStages] = useState<TStage[]>([]);
-  const [acceptedPassword, setAcceptedPassword] = useState(false);
+  const { extractFeatures } = usePasswordMetric();
+  const { metrics, stages, activeStage, passwordAccepted, setStages, setActiveStage, setMetrics, setPasswordAccepted } =
+    usePasswordWizard();
 
-  const onSubmit = (values: TPasswordForm) => {
-    console.log('onSubmit', values);
-    setActiveStage(activeStage + 1);
+  const onSubmit = async (values: TPasswordForm) => {
+    const currentPassword = values[`password${activeStage}` as keyof TPasswordForm];
+
+    if (metrics) {
+      if (activeStage === 4) {
+        setPasswordAccepted(true);
+        setActiveStage(3);
+      } else {
+        setActiveStage(activeStage + 1);
+      }
+
+      const result = await extractFeatures(currentPassword, metrics, activeStage);
+      const newStages = [...stages, result];
+
+      setStages(newStages);
+      setMetrics(undefined);
+    }
   };
 
   return (
@@ -27,9 +43,7 @@ export default function PasswordWizardForm() {
       }}
       onSubmit={onSubmit}
     >
-      {({ values, resetForm }) => {
-        console.log(values);
-
+      {({ resetForm }) => {
         return (
           <Fragment>
             <AnimatePresence mode='wait'>
@@ -42,17 +56,16 @@ export default function PasswordWizardForm() {
                 transition={{ duration: 0.15 }}
               >
                 {activeStage === 3 ? (
-                  stages[2].strength === 2 && acceptedPassword ? (
-                    <FeedbackAnalysis />
+                  passwordAccepted ? (
+                    <PasswordAnalysis />
                   ) : (
-                    <DecisionNotification setActiveStage={setActiveStage} setAcceptedPassword={setAcceptedPassword} />
+                    <DecisionNotification />
                   )
                 ) : (
                   <Form className='flex justify-center gap-4'>
-                    <PasswordInput activeStage={activeStage} />
+                    <PasswordInput />
 
                     <motion.button
-                      type='submit'
                       whileHover={{ x: 5, scale: 1.02 }}
                       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                       className='flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary)]'
@@ -70,6 +83,7 @@ export default function PasswordWizardForm() {
                 className='py-16 text-xs text-[var(--secondary)]'
                 onClick={() => {
                   resetForm();
+                  setStages([]);
                   setActiveStage(1);
                 }}
               >
