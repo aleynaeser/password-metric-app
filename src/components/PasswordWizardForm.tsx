@@ -33,7 +33,7 @@ export default function PasswordWizardForm() {
     if (metrics) {
       const end = DateTime.now();
       const diff = startTime && end.diff(startTime, ['minutes', 'seconds']);
-     
+
       const result = await extractFeatures(currentPassword, metrics, activeStage);
       const newStages = [...stages, result];
 
@@ -45,9 +45,13 @@ export default function PasswordWizardForm() {
         attempt: userStats.attempts[activeStage - 1],
       });
 
-      if (activeStage === 4) {
+      if (activeStage === 3) {
         setPasswordAccepted(true);
-        setActiveStage(3);
+        setTimeout(() => {
+          setActiveStage(4);
+        }, 500);
+      } else if (activeStage === 2) {
+        setActiveStage(4);
       } else {
         setActiveStage(activeStage + 1);
       }
@@ -75,7 +79,7 @@ export default function PasswordWizardForm() {
                 className='w-full'
                 transition={{ duration: 0.15 }}
               >
-                {activeStage === 3 ? (
+                {stages.length > 0 && activeStage === 4 ? (
                   passwordAccepted ? (
                     <PasswordAnalysis />
                   ) : (
@@ -97,16 +101,19 @@ export default function PasswordWizardForm() {
               </motion.div>
             </AnimatePresence>
 
-            {activeStage !== 3 && (
+            {activeStage !== 1 && (
               <motion.button
                 type='reset'
                 whileHover={{ x: -5, scale: 1.02 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                 className='flex justify-center gap-2 py-16 text-xs text-[var(--secondary)]'
                 onClick={() => {
-                  resetForm();
-                  setStages([]);
                   setActiveStage(1);
+                  setPasswordAccepted(false);
+                  setTimeout(() => {
+                    resetForm();
+                    setStages([]);
+                  }, 500);
                 }}
               >
                 <div className='flex h-4 w-4 rotate-180 items-center justify-center rounded-full bg-[var(--primary)]'>

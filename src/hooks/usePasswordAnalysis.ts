@@ -46,7 +46,7 @@ export const usePasswordAnalysis = () => {
     );
 
     const longestStrength = stages[longestDurationIndex].strength;
-    const shortestStrength = stages[shortestDurationIndex].strength;
+    const shortestStrength = stages[shortestDurationIndex]?.strength;
 
     if (longestStrength === shortestStrength) {
       message = 'Şifre oluşturma süreniz ve şifre gücünüz arasında dengeli bir ilişki var.';
@@ -85,8 +85,14 @@ export const usePasswordAnalysis = () => {
     const shortestStrength = stages[shortestDurationIndex].strength;
     const longestStrength = stages[longestDurationIndex].strength;
 
-    const longestAttemptIndex = userStats.times.reduce((maxIdx, attempt, idx) => (attempt > attempt ? idx : maxIdx), 0);
-    const shortestAttemptIndex = userStats.times.reduce((minIdx, attempt, idx) => (attempt < attempt ? idx : minIdx), 0);
+    const longestAttemptIndex = userStats.attempts.reduce(
+      (maxIdx, attempt, idx) => (attempt > userStats.attempts[maxIdx] ? idx : maxIdx),
+      0,
+    );
+    const shortestAttemptIndex = userStats.attempts.reduce(
+      (minIdx, attempt, idx) => (attempt < userStats.attempts[minIdx] ? idx : minIdx),
+      0,
+    );
 
     const longestAttempts = userStats.attempts[longestAttemptIndex];
     const shortestAttempts = userStats.attempts[shortestAttemptIndex];
@@ -108,14 +114,18 @@ export const usePasswordAnalysis = () => {
       else message = 'Şifre oluşturma süreniz kısaldıkça, daha az denemeyle şifre oluşturdunuz.';
     }
 
+    const shortestStage = stages[shortestAttemptIndex];
+    const longestStage = stages[longestAttemptIndex];
+    const isEqual = shortestStage?.strength === longestStage?.strength;
+
     return {
       longestAttemptStage: {
         attempt: longestAttempts,
-        stage: stages[longestAttemptIndex],
+        stage: isEqual ? stages[0] : longestStage,
       },
       shortestAttemptStage: {
         attempt: shortestAttempts,
-        stage: stages[shortestAttemptIndex],
+        stage: isEqual ? stages[1] : shortestStage,
       },
       message: message,
     };

@@ -14,14 +14,14 @@ export default function DecisionNotification() {
           type='button'
           className='text-[var(--secondary)]'
           onClick={() => {
-            setActiveStage(3);
+            setActiveStage(4);
             setPasswordAccepted(true);
           }}
         >
           Hayır
         </button>
 
-        <button type='button' className='text-[var(--success)]' onClick={() => setActiveStage(4)}>
+        <button type='button' className='text-[var(--success)]' onClick={() => setActiveStage(3)}>
           Evet
         </button>
       </div>

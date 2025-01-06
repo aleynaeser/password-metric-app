@@ -103,24 +103,24 @@ export default function PasswordAnalysis() {
           <div className='flex flex-col gap-2'>
             <span>
               <strong>En az deneme yapılan aşama: </strong>
-              <span>Aşama {shortestAttemptStage.stage.id}</span>
+              <span>Aşama {shortestAttemptStage.stage?.id}</span>
             </span>
 
             <span>
               <strong>Deneme Sayısı: </strong>
               <span className='text-blue-600'>{shortestAttemptStage.attempt} defa</span>, <strong>Güç Seviyesi: </strong>
-              <span className='text-green-600'>{shortestAttemptStage.stage.strength}</span>
+              <span className='text-green-600'>{shortestAttemptStage.stage?.strength}</span>
             </span>
 
             <span>
               <strong>En fazla deneme yapılan aşama: </strong>
-              <span>Aşama {longestAttemptStage.stage.id}</span>
+              <span>Aşama {longestAttemptStage.stage?.id}</span>
             </span>
 
             <span>
               <strong>Deneme Sayısı: </strong>
               <span className='text-blue-600'>{longestAttemptStage.attempt} defa</span>, <strong>Güç Seviyesi: </strong>
-              <span className='text-green-600'>{longestDurationStage.stage.strength}</span>
+              <span className='text-green-600'>{longestDurationStage.stage?.strength}</span>
             </span>
 
             <span className='mt-2 font-medium text-purple-700'>{attemptMessage}</span>

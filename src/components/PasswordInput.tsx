@@ -23,8 +23,6 @@ export default function PasswordInput() {
     }
   };
 
-  console.log(userStats);
-
   const handleBlur = () => {
     setFieldTouched(passwordName, true);
 
@@ -66,13 +64,13 @@ export default function PasswordInput() {
         <ErrorMessage name={passwordName} />
       </motion.div>
 
-      {(activeStage === 2 || activeStage === 4) && (
+      {(activeStage === 2 || activeStage === 3) && (
         <div className='mt-6 flex flex-col gap-2'>
           <div className='text-xs text-[var(--secondary)]'>
             Güçlü bir parola oluşturmak için şu gereksinimleri karşılayın:
           </div>
 
-          {activeStage === 4 && (
+          {activeStage === 3 && (
             <PasswordStrengthBar password={currentPassword} scoreWords={['Zayıf', 'Orta', 'İyi', 'Güçlü']} />
           )}
 
