@@ -1,5 +1,6 @@
 'use client';
 
+import { DateTime, Duration } from 'luxon';
 import { Result } from 'check-password-strength';
 import { createContext, useContext, useState } from 'react';
 
@@ -14,6 +15,8 @@ interface IPasswordWizardContext {
   updateStats: (stats: TStats) => void;
   metrics: Result<string> | undefined;
   setMetrics: (stage: Result<string> | undefined) => void;
+  startTime: DateTime<true> | undefined;
+  setStartTime: (time: DateTime<true> | undefined) => void;
 }
 
 const PasswordWizardContext = createContext<IPasswordWizardContext | undefined>(undefined);
@@ -24,16 +27,17 @@ export function PasswordWizardContextProvider({ children }: { children: React.Re
 
   const [metrics, setMetrics] = useState<Result<string>>();
   const [passwordAccepted, setPasswordAccepted] = useState<boolean>(false);
+  const [startTime, setStartTime] = useState<DateTime<true> | undefined>();
 
   const [userStats, setUserStats] = useState<TUserStats>({
-    times: [0, 0, 0],
+    times: [],
     attempts: [0, 0, 0],
   });
 
-  const updateStats = ({ time, attempt }: TStats) => {
+  const updateStats = (stats: { time: Duration; attempt: number }) => {
     const newStats = { ...userStats };
-    newStats.times[activeStage - 1] += time;
-    newStats.attempts[activeStage - 1] += attempt;
+    newStats.times[activeStage - 1] = stats.time;
+    newStats.attempts[activeStage - 1] = stats.attempt;
     setUserStats(newStats);
   };
 
@@ -48,6 +52,8 @@ export function PasswordWizardContextProvider({ children }: { children: React.Re
     updateStats,
     metrics,
     setMetrics,
+    startTime,
+    setStartTime,
   };
 
   return <PasswordWizardContext.Provider value={value}>{children}</PasswordWizardContext.Provider>;

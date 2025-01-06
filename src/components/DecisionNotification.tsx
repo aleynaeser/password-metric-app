@@ -1,11 +1,11 @@
-import { usePasswordWizard } from '@/context/PasswordWizardContextProvider';
+import { usePasswordWizard } from '@context/PasswordWizardContextProvider';
 
 export default function DecisionNotification() {
   const { setActiveStage, setPasswordAccepted } = usePasswordWizard();
 
   return (
     <div>
-      <div className='text-center text-sm'>
+      <div className='text-center text-sm leading-6'>
         Daha güçlü bir parola oluşturmak güvenliğinizi artırır. Devam etmek istiyor musunuz?
       </div>
 

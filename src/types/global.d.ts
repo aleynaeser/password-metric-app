@@ -13,14 +13,14 @@ declare global {
     allowedSymbols?: string;
   };
 
-  type TUserStats = {
-    times: [number, number, number];
-    attempts: [number, number, number];
+  type TStats = {
+    time: Duration;
+    attempt: number;
   };
 
-  type TStats = {
-    time: number;
-    attempt: number;
+  type TUserStats = {
+    times: Array<Duration>;
+    attempts: Array<number>;
   };
 
   type TStage = {

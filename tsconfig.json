@@ -21,7 +21,7 @@
     "paths": {
       "@hooks/*": ["./src/hooks/*"],
       "@types/*": ["./src/types/*"],
-      "@schemas/*": ["./src/schemas/*"],
+      "@context/*": ["./src/context/*"],
       "@constants/*": ["./src/constants/*"],
       "@components/*": ["./src/components/*"],
       "@styles/*": ["./src/styles/*"],

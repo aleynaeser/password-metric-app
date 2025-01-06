@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import PasswordWizardForm from '@components/PasswordWizardForm';
-import { PasswordWizardContextProvider } from '@/context/PasswordWizardContextProvider';
+import { PasswordWizardContextProvider } from '@context/PasswordWizardContextProvider';
 
 export default async function PasswordMetricApp() {
   return (
@@ -14,7 +14,7 @@ export default async function PasswordMetricApp() {
         </div>
 
         <div className='flex flex-col gap-2 text-center text-xs leading-6 text-[var(--secondary)]'>
-          Bu uygulama, kullanıcıların bilişsel parola eğilimlerini analiz eden ve güçlü-zayıf şifre ayrımını değerlendirerek
+          Bu uygulama, kullanıcıların bilişsel parola eğilimlerini analiz eden ve güçlü-zayıf parola ayrımını değerlendirerek
           kullanıcıya öneriler sunan bir web tabanlı sistem geliştirmeyi amaçlamaktadır.
         </div>
       </div>

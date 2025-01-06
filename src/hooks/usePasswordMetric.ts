@@ -8,7 +8,7 @@ export const usePasswordMetric = () => {
   // Mark this function as async to handle the asynchronous loadCommonPasswords
   const extractFeatures = async (password: string, metric: Result<string>, activeStage: number) => {
     await loadCommonPasswords();
-    const isValid = await checkContainsDictionaryWord(password);
+    const isValidWord = await checkContainsDictionaryWord(password);
 
     return {
       id: activeStage,
@@ -20,7 +20,7 @@ export const usePasswordMetric = () => {
       hasUpperCase: metric.contains.includes('uppercase'),
       hasSpecialChars: metric.contains.includes('symbol'),
       is_common_password: isCommon(password),
-      contains_dictionary_word: isValid,
+      contains_dictionary_word: isValidWord,
       num_lowercase: (password.match(/[a-z]/g) || []).length,
       num_uppercase: (password.match(/[A-Z]/g) || []).length,
       num_digits: (password.match(/\d/g) || []).length,
@@ -43,8 +43,8 @@ export const usePasswordMetric = () => {
   };
 
   const checkContainsDictionaryWord = async (password: string) => {
-    const isValid = await checkWord(password);
-    return isValid;
+    const isValidWord = await checkWord(password);
+    return isValidWord;
   };
 
   // Check is Common Password

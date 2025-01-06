@@ -1,39 +1,37 @@
+import { useMemo } from 'react';
+import { DateTime } from 'luxon';
 import { motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
 import { requirementLabels } from '@constants/password-requirements';
 import { ErrorMessage, Field, getIn, useFormikContext } from 'formik';
 import { DiversityType, passwordStrength } from 'check-password-strength';
-import { usePasswordWizard } from '@/context/PasswordWizardContextProvider';
+import { usePasswordWizard } from '@context/PasswordWizardContextProvider';
 import PasswordStrengthBar from 'react-password-strength-bar';
 
 export default function PasswordInput() {
-  const { activeStage, userStats, metrics, updateStats, setMetrics } = usePasswordWizard();
+  const { activeStage, userStats, startTime, metrics, updateStats, setMetrics, setStartTime } = usePasswordWizard();
   const { values, setFieldValue, setFieldTouched } = useFormikContext<TPasswordForm>();
-
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
-  const [startTime, setStartTime] = useState<number>(0);
 
   const passwordName = `password${activeStage}`;
   const currentPassword = useMemo(() => getIn(values, passwordName), [passwordName, values]);
 
   const placeholder = ['Parola oluştur', 'Parola gereksinimlerine göre oluştur', 'Parola güçlendir'];
 
-  const handleBlur = () => {
-    if (timer) {
-      clearInterval(timer);
-      setTimer(null);
+  const handleFocus = () => {
+    if (!startTime) {
+      const start = DateTime.now();
+      setStartTime(start);
     }
-
-    setFieldTouched(passwordName, true);
   };
 
-  const handleFocus = () => {
-    setStartTime(Date.now());
-    const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      updateStats({ time: userStats.times[activeStage - 1] + elapsed, attempt: userStats.attempts[activeStage - 1] });
-    }, 1000);
-    setTimer(interval);
+  console.log(userStats);
+
+  const handleBlur = () => {
+    setFieldTouched(passwordName, true);
+
+    updateStats({
+      time: userStats.times[activeStage - 1],
+      attempt: userStats.attempts[activeStage - 1] + 1,
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,8 +40,12 @@ export default function PasswordInput() {
     setFieldValue(passwordName, value);
     setMetrics(passwordStrength(value));
 
-    if (value === '')
-      updateStats({ time: userStats.times[activeStage - 1], attempt: userStats.attempts[activeStage - 1] + 1 });
+    if (value === '') {
+      updateStats({
+        time: userStats.times[activeStage - 1],
+        attempt: userStats.attempts[activeStage - 1] + 1,
+      });
+    }
   };
 
   return (
@@ -70,7 +72,9 @@ export default function PasswordInput() {
             Güçlü bir parola oluşturmak için şu gereksinimleri karşılayın:
           </div>
 
-          {activeStage === 4 && <PasswordStrengthBar password={currentPassword} />}
+          {activeStage === 4 && (
+            <PasswordStrengthBar password={currentPassword} scoreWords={['Zayıf', 'Orta', 'İyi', 'Güçlü']} />
+          )}
 
           <ul className='mt-4 space-y-2 text-xs'>
             {Object.keys(requirementLabels).map((key) => {
