@@ -31,7 +31,7 @@ export function PasswordWizardContextProvider({ children }: { children: React.Re
 
   const [userStats, setUserStats] = useState<TUserStats>({
     times: [],
-    attempts: [0, 0, 0],
+    attempts: [],
   });
 
   const updateStats = (stats: { time: Duration; attempt: number }) => {

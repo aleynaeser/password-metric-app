@@ -28,7 +28,7 @@ export default function PasswordInput() {
 
     updateStats({
       time: userStats.times[activeStage - 1],
-      attempt: userStats.attempts[activeStage - 1] + 1,
+      attempt: Number(userStats.attempts[activeStage - 1] ?? 0) + 1,
     });
   };
 
@@ -41,7 +41,7 @@ export default function PasswordInput() {
     if (value === '') {
       updateStats({
         time: userStats.times[activeStage - 1],
-        attempt: userStats.attempts[activeStage - 1] + 1,
+        attempt: Number(userStats.attempts[activeStage - 1] ?? 0) + 1,
       });
     }
   };

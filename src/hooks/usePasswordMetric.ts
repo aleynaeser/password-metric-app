@@ -19,7 +19,7 @@ export const usePasswordMetric = () => {
       hasLowerCase: metric.contains.includes('lowercase'),
       hasUpperCase: metric.contains.includes('uppercase'),
       hasSpecialChars: metric.contains.includes('symbol'),
-      is_common_password: isCommon(password),
+      is_common_password: isCommonPassword(password),
       contains_dictionary_word: isValidWord,
       num_lowercase: (password.match(/[a-z]/g) || []).length,
       num_uppercase: (password.match(/[A-Z]/g) || []).length,
@@ -59,7 +59,7 @@ export const usePasswordMetric = () => {
     }
   };
 
-  const isCommon = (password: string) => {
+  const isCommonPassword = (password: string) => {
     return commonPasswords.includes(password);
   };
 

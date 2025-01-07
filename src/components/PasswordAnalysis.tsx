@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { usePasswordAnalysis } from '@hooks/usePasswordAnalysis';
 import { usePasswordWizard } from '@context/PasswordWizardContextProvider';
 
@@ -67,7 +68,7 @@ export default function PasswordAnalysis() {
 
             <span>
               <strong>En kısa süre geçirilen aşama: </strong>
-              <span className='font-medium'>Aşama {shortestDurationStage.stage.id}</span>
+              <span className='font-medium'>Aşama {shortestDurationStage.stage?.id}</span>
             </span>
 
             <span>
@@ -76,7 +77,7 @@ export default function PasswordAnalysis() {
                 {shortestDurationStage.duration?.minutes} dakika {shortestDurationStage.duration?.seconds.toFixed(3)} saniye
               </span>
               , <strong>Güç Seviyesi: </strong>
-              <span className='text-green-600'>{shortestDurationStage.stage.strength}</span>
+              <span className='text-green-600'>{shortestDurationStage.stage?.strength}</span>
             </span>
 
             <span>
@@ -98,30 +99,39 @@ export default function PasswordAnalysis() {
         </div>
 
         <div>
-          <h3 className='text-md pb-4 font-bold'>5. Parola Gücü, Deneme Sayısı ve Süresi arasındaki ilişki</h3>
+          <h3 className='text-md pb-4 font-bold'>5. Parola Gücü, Deneme Sayısı ve Deneme Süresi arasındaki ilişki</h3>
 
           <div className='flex flex-col gap-2'>
-            <span>
-              <strong>En az deneme yapılan aşama: </strong>
-              <span>Aşama {shortestAttemptStage.stage?.id}</span>
-            </span>
+            {shortestAttemptStage.attempt === longestAttemptStage.attempt ? (
+              <span>
+                <strong>Aşamalar arası deneme sayısı eşit: </strong>
+                <span className='text-blue-600'>{shortestAttemptStage.attempt} defa</span>
+              </span>
+            ) : (
+              <Fragment>
+                <span>
+                  <strong>En az deneme yapılan aşama: </strong>
+                  <span>Aşama {shortestAttemptStage.stage?.id}</span>
+                </span>
 
-            <span>
-              <strong>Deneme Sayısı: </strong>
-              <span className='text-blue-600'>{shortestAttemptStage.attempt} defa</span>, <strong>Güç Seviyesi: </strong>
-              <span className='text-green-600'>{shortestAttemptStage.stage?.strength}</span>
-            </span>
+                <span>
+                  <strong>Deneme Sayısı: </strong>
+                  <span className='text-blue-600'>{shortestAttemptStage.attempt} defa</span>, <strong>Güç Seviyesi: </strong>
+                  <span className='text-green-600'>{shortestAttemptStage.stage?.strength}</span>
+                </span>
 
-            <span>
-              <strong>En fazla deneme yapılan aşama: </strong>
-              <span>Aşama {longestAttemptStage.stage?.id}</span>
-            </span>
+                <span>
+                  <strong>En fazla deneme yapılan aşama: </strong>
+                  <span>Aşama {longestAttemptStage.stage?.id}</span>
+                </span>
 
-            <span>
-              <strong>Deneme Sayısı: </strong>
-              <span className='text-blue-600'>{longestAttemptStage.attempt} defa</span>, <strong>Güç Seviyesi: </strong>
-              <span className='text-green-600'>{longestDurationStage.stage?.strength}</span>
-            </span>
+                <span>
+                  <strong>Deneme Sayısı: </strong>
+                  <span className='text-blue-600'>{longestAttemptStage.attempt} defa</span>, <strong>Güç Seviyesi: </strong>
+                  <span className='text-green-600'>{longestDurationStage.stage?.strength}</span>
+                </span>
+              </Fragment>
+            )}
 
             <span className='mt-2 font-medium text-purple-700'>{attemptMessage}</span>
           </div>

@@ -89,6 +89,7 @@ export const usePasswordAnalysis = () => {
       (maxIdx, attempt, idx) => (attempt > userStats.attempts[maxIdx] ? idx : maxIdx),
       0,
     );
+
     const shortestAttemptIndex = userStats.attempts.reduce(
       (minIdx, attempt, idx) => (attempt < userStats.attempts[minIdx] ? idx : minIdx),
       0,
@@ -96,6 +97,8 @@ export const usePasswordAnalysis = () => {
 
     const longestAttempts = userStats.attempts[longestAttemptIndex];
     const shortestAttempts = userStats.attempts[shortestAttemptIndex];
+
+    console.log(userStats  );
 
     if (longestAttempts === shortestAttempts) {
       if (longestStrength === shortestStrength)
@@ -114,18 +117,14 @@ export const usePasswordAnalysis = () => {
       else message = 'Şifre oluşturma süreniz kısaldıkça, daha az denemeyle şifre oluşturdunuz.';
     }
 
-    const shortestStage = stages[shortestAttemptIndex];
-    const longestStage = stages[longestAttemptIndex];
-    const isEqual = shortestStage?.strength === longestStage?.strength;
-
     return {
       longestAttemptStage: {
         attempt: longestAttempts,
-        stage: isEqual ? stages[0] : longestStage,
+        stage: stages[longestAttemptIndex],
       },
       shortestAttemptStage: {
         attempt: shortestAttempts,
-        stage: isEqual ? stages[1] : shortestStage,
+        stage: stages[shortestAttemptIndex],
       },
       message: message,
     };
@@ -140,7 +139,7 @@ export const usePasswordAnalysis = () => {
       }
       return 'Kullanıcı güçlü bir şifre oluşturdu. Bu, kullanıcının güçlü şifre oluşturma sürecine uygun şekilde dikkatli kararlar verdiğini ve güvenli şifreleme konusuna yönelik bilinçli bir çaba sarf ettiğini göstermektedir. Bunu başarmak, bilişsel uyumsuzluk yerine güvenlik bilincinin yüksek olduğunu ortaya koyuyor.';
     }
-    return 'Kullanıcı süreçte güçlü bir şifre oluşturdu. Bu durumda, kullanıcı sürecin her aşamasında bilinçli kararlar alarak güvenli bir şifre oluşturma yolunda çaba sarf etti.';
+    return 'Kullanıcı süreçte güçlü bir şifre oluşturmaya çalıştı. Bu durumda, kullanıcı sürecin her aşamasında bilinçli kararlar alarak güvenli bir şifre oluşturma yolunda çaba sarf etti.';
   };
 
   const mostStrongPassword = calculateMostStrengthPassword();
