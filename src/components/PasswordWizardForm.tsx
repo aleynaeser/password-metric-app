@@ -27,8 +27,6 @@ export default function PasswordWizardForm() {
     setPasswordAccepted,
   } = usePasswordWizard();
 
-  console.log(passwordAccepted);
-
   const onSubmit = async (values: TPasswordForm) => {
     const currentPassword = values[`password${activeStage}` as keyof TPasswordForm];
 
@@ -44,7 +42,7 @@ export default function PasswordWizardForm() {
 
       updateStats({
         time: diff,
-        attempt: userStats.attempts[activeStage - 1],
+        attempt: userStats.attempts[activeStage - 1] ?? 1,
       });
 
       if (activeStage === 3) {
