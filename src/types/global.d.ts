@@ -23,6 +23,8 @@ declare global {
     attempts: Array<number>;
   };
 
+  type TStrength = 0 | 1 | 2 | 3;
+
   type TStage = {
     id: number;
     password: string;
